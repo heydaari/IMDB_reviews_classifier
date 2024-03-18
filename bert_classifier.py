@@ -1,18 +1,23 @@
+import os
+os.environ["KERAS_BACKEND"] = "tensorflow"  # Or "jax" or "torch"!
 import keras_nlp
 import tensorflow_datasets as tfds
 
-imdb_train, imdb_test = tfds.load(
-    name="imdb_reviews", split=["train", "test"], as_supervised=True, batch_size=16
-)
+# Load IMDb movie reviews dataset
+imdb_train, imdb_test = tfds.load("imdb_reviews",
+                                  split=["train", "test"],
+                                  as_supervised=True,
+                                  batch_size=1)
 
-print(imdb_train[1])
+print(list(imdb_train)[0][0])
+print(list(imdb_train)[0][1])
 exit()
 
-classifier = keras_nlp.models.BertClassifier.from_preset(
-    preset= "bert_base_en_uncased", num_classes=2
-)
+# Load a BERT model
+classifier = keras_nlp.models.BertClassifier.from_preset("bert_base_en_uncased", num_classes=2)
 
-classifier.fit(imdb_train, validation_data=imdb_test)
+# Fine-tune on IMDb movie reviews
+classifier.fit(imdb_train, )
 
-# Predict sentiment for new examples
+# Predict on new examples
 classifier.predict(["What an amazing movie!", "A total waste of my time."])

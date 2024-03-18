@@ -1,11 +1,11 @@
 # Developed by Mohammad Hassan Heydari
 # IMDB Reviews classifier
-import keras.layers
+
 from keras.models import Sequential
 from keras.preprocessing.text import Tokenizer
 import tensorflow_datasets as tfds
 from keras.utils import pad_sequences
-from keras.layers import Embedding, Dense, Flatten
+from keras.layers import Embedding,Bidirectional, LSTM, Dense, Flatten
 from numpy import array
 
 imdb, info = tfds.load('imdb_reviews', with_info=True, as_supervised=True)
@@ -34,10 +34,12 @@ test_sequences = tokenizer.texts_to_sequences(test_sentences)
 test_padded = pad_sequences(test_sequences, maxlen=120, truncating='post')
 
 model = Sequential([
-    Embedding(10000, 16, input_length=120),
+    Embedding(input_dim= 10000, output_dim= 16, input_length=120),
+    Bidirectional(LSTM(units= 32, return_sequences=True)),
+    Bidirectional(LSTM(units= 16, return_sequences=False)),
     Flatten(),
-    Dense(32, activation='relu'),
-    Dense(1, activation='sigmoid')
+    Dense(units= 32, activation='relu'),
+    Dense(units= 1, activation='sigmoid')
 
 ])
 
